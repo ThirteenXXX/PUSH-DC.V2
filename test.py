@@ -49,7 +49,7 @@ while True:
 
             # Pilih pengguna secara acak dari daftar pengguna
             if user_ids:
-                random_user_id = random.choice(user_ids)
+                random_user_id = random.choice(user_ids)  # Memilih pengguna secara acak
 
                 # Ambil pesan balasan secara urut dari file
                 current_message = words[current_message_index].strip()
