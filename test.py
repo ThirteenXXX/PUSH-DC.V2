@@ -40,35 +40,42 @@ while True:
     current_message = words[current_message_index].strip()
     current_message_index = (current_message_index + 1) % len(words)  # Loop back to start when reaching end
 
-    payload = {
-        'content': current_message
-    }
-
-    headers = {
-        'Authorization': authorization
-    }
-
-    # Send message
-    r = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", 
-                     data=payload, 
-                     headers=headers)
-    
-    print(Fore.WHITE + "Sent message: ")
-    print(Fore.YELLOW + payload['content'])
-
-    # Check channel status
+    # Get the last message from the channel
     response = requests.get(f'https://discord.com/api/v9/channels/{channel_id}/messages', 
-                          headers=headers)
+                            headers={'Authorization': authorization})
 
     if response.status_code == 200:
         messages = response.json()
-        if len(messages) == 0:
-            is_running = False
-            break
-        else:
+        if len(messages) > 0:
+            last_message = messages[0]  # Ambil pesan terakhir
+            last_message_id = last_message['id']  # ID pesan terakhir
+
+            # Prepare payload for replying to the last message
+            payload = {
+                'content': current_message,
+                'message_reference': {
+                    'message_id': last_message_id
+                }
+            }
+
+            headers = {
+                'Authorization': authorization
+            }
+
+            # Send message
+            r = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", 
+                             json=payload, 
+                             headers=headers)
+            
+            print(Fore.WHITE + "Sent message: ")
+            print(Fore.YELLOW + payload['content'])
+
             time.sleep(waktu1)
+        else:
+            print("Tidak ada pesan untuk dibalas.")
+            break
     else:
         print(f'Gagal mendapatkan pesan di channel: {response.status_code}')
-    
+        break
+
     time.sleep(waktu1)
-    
