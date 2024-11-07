@@ -59,7 +59,7 @@ while True:
                 payload = {
                     'content': current_message,
                     'message_reference': {
-                        'message_id': messages[0]['id']  # Menggunakan ID pesan pertama untuk referensi
+                        'message_id': random.choice(messages)['id']  # Menggunakan ID pesan acak untuk referensi
                     }
                 }
 
