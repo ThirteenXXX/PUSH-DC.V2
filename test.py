@@ -1,6 +1,7 @@
 import requests
 import time
 import os
+import random
 from colorama import Fore
 
 print("===========================================")
@@ -36,41 +37,48 @@ current_message_index = 0
 while True:
     channel_id = channel_id.strip()
 
-    # Get current message and increment index
-    current_message = words[current_message_index].strip()
-    current_message_index = (current_message_index + 1) % len(words)  # Loop back to start when reaching end
-
-    # Get the last message from the channel
+    # Ambil semua pesan dari channel
     response = requests.get(f'https://discord.com/api/v9/channels/{channel_id}/messages', 
                             headers={'Authorization': authorization})
 
     if response.status_code == 200:
         messages = response.json()
         if len(messages) > 0:
-            last_message = messages[0]  # Ambil pesan terakhir
-            last_message_id = last_message['id']  # ID pesan terakhir
+            # Ambil daftar pengguna yang mengirim pesan
+            user_ids = list(set(message['author']['id'] for message in messages))
 
-            # Prepare payload for replying to the last message
-            payload = {
-                'content': current_message,
-                'message_reference': {
-                    'message_id': last_message_id
+            # Pilih pengguna secara acak dari daftar pengguna
+            if user_ids:
+                random_user_id = random.choice(user_ids)
+
+                # Ambil pesan balasan secara urut dari file
+                current_message = words[current_message_index].strip()
+                current_message_index = (current_message_index + 1) % len(words)  # Loop kembali ke awal jika sudah mencapai akhir
+
+                # Siapkan payload untuk membalas pesan
+                payload = {
+                    'content': current_message,
+                    'message_reference': {
+                        'message_id': messages[0]['id']  # Menggunakan ID pesan pertama untuk referensi
+                    }
                 }
-            }
 
-            headers = {
-                'Authorization': authorization
-            }
+                headers = {
+                    'Authorization': authorization
+                }
 
-            # Send message
-            r = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", 
-                             json=payload, 
-                             headers=headers)
-            
-            print(Fore.WHITE + "Sent message: ")
-            print(Fore.YELLOW + payload['content'])
+                # Kirim pesan
+                r = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", 
+                                 json=payload, 
+                                 headers=headers)
 
-            time.sleep(waktu1)
+                print(Fore.WHITE + f"Sent message to user ID {random_user_id}: ")
+                print(Fore.YELLOW + payload['content'])
+
+                time.sleep(waktu1)
+            else:
+                print("Tidak ada pengguna untuk dibalas.")
+                break
         else:
             print("Tidak ada pesan untuk dibalas.")
             break
@@ -79,3 +87,4 @@ while True:
         break
 
     time.sleep(waktu1)
+    
