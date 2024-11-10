@@ -4,9 +4,35 @@ import os
 import random
 from colorama import Fore
 
-print("===========================================")
-print('BOT AUTO CHAT DISCORD BY Thirteen𝕏')
-print("===========================================\n")
+ascii_art = r'''
+  ________    _      __                 _  __
+ /_  __/ /_  (_)____/ /____  ___  ____ | |/ /
+  / / / __ \/ / ___/ __/ _ \/ _ \/ __ \|   / 
+ / / / / / / / /  / /_/  __/  __/ / / /   |  
+/_/ /_/ /_/_/_/   \__/\___/\___/_/ /_/_/|_|  
+
+  >>> BOT AUTO CHAT-AUTO REPLAY DISCORD V.2
+============================================
+'''
+
+def gradient_text(text, colors):
+    colored_text = ""
+    color_index = 0
+    for char in text:
+        if char == ' ':
+            colored_text += " "
+        else:
+            colored_text += f"\033[{colors[color_index]}m{char}\033[0m"
+        color_index = (color_index + 1) % len(colors)
+    return colored_text
+
+colors = [
+    '32',
+]
+
+colored_ascii = gradient_text(ascii_art, colors)
+
+print(colored_ascii)
 
 time.sleep(1)
 
