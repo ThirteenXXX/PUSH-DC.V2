@@ -98,7 +98,7 @@ while True:
                                  json=payload, 
                                  headers=headers)
 
-                print(Fore.WHITE + f"Sent message to user ID {random_user_id}: ")
+                print(Fore.WHITE + f"Sent message replay to user ID {random_user_id}: ")
                 print(Fore.YELLOW + payload['content'])
 
                 time.sleep(waktu1)
