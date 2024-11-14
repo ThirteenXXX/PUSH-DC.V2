@@ -11,7 +11,7 @@ ascii_art = r'''
  / / / / / / / /  / /_/  __/  __/ / / /   |  
 /_/ /_/ /_/_/_/   \__/\___/\___/_/ /_/_/|_|  
 
-  >>> BOT AUTO CHAT-AUTO REPLAY DISCORD V.2
+  >>> BOT AUTO CHAT-AUTO REPLY DISCORD V.2
 ============================================
 '''
 
@@ -31,7 +31,6 @@ colors = [
 ]
 
 colored_ascii = gradient_text(ascii_art, colors)
-
 print(colored_ascii)
 
 time.sleep(1)
@@ -57,35 +56,31 @@ with open("pesan.txt", "r") as f:
 with open("token.txt", "r") as f:
     authorization = f.readline().strip()
 
-# Initialize message index
-current_message_index = 0
-
 while True:
     channel_id = channel_id.strip()
 
-    # Ambil semua pesan dari channel
+    # Retrieve all messages from the channel
     response = requests.get(f'https://discord.com/api/v9/channels/{channel_id}/messages', 
                             headers={'Authorization': authorization})
 
     if response.status_code == 200:
         messages = response.json()
         if len(messages) > 0:
-            # Ambil daftar pengguna yang mengirim pesan
+            # Get list of user IDs from the messages
             user_ids = list(set(message['author']['id'] for message in messages))
 
-            # Pilih pengguna secara acak dari daftar pengguna
+            # Choose a random user from the list
             if user_ids:
-                random_user_id = random.choice(user_ids)  # Memilih pengguna secara acak
+                random_user_id = random.choice(user_ids)  # Select random user
 
-                # Ambil pesan balasan secara urut dari file
-                current_message = words[current_message_index].strip()
-                current_message_index = (current_message_index + 1) % len(words)  # Loop kembali ke awal jika sudah mencapai akhir
+                # Choose a random message from the list
+                current_message = random.choice(words).strip()
 
-                # Siapkan payload untuk membalas pesan
+                # Prepare the payload to reply to the message
                 payload = {
                     'content': current_message,
                     'message_reference': {
-                        'message_id': random.choice(messages)['id']  # Menggunakan ID pesan acak untuk referensi
+                        'message_id': random.choice(messages)['id']  # Use a random message ID for reference
                     }
                 }
 
@@ -93,12 +88,12 @@ while True:
                     'Authorization': authorization
                 }
 
-                # Kirim pesan
+                # Send the message
                 r = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", 
                                  json=payload, 
                                  headers=headers)
 
-                print(Fore.WHITE + f"Sent message replay to user ID {random_user_id}: ")
+                print(Fore.WHITE + f"Sent message reply to user ID {random_user_id}: ")
                 print(Fore.YELLOW + payload['content'])
 
                 time.sleep(waktu1)
@@ -113,4 +108,3 @@ while True:
         break
 
     time.sleep(waktu1)
-    
